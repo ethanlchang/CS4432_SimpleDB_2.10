@@ -117,6 +117,7 @@ class BasicBufferMgr {
             return buff.getIndex();
          }
       }
+      return -1;
    }
    
    /**
