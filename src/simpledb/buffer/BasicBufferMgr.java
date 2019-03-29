@@ -2,6 +2,8 @@ package simpledb.buffer;
 
 import simpledb.file.*;
 
+import java.util.ArrayList;
+
 /**
  * Manages the pinning and unpinning of buffers to blocks.
  * @author Edward Sciore
@@ -9,6 +11,7 @@ import simpledb.file.*;
  */
 class BasicBufferMgr {
    private Buffer[] bufferpool;
+   private ArrayList<Integer> availableFrames;
    private int numAvailable;
    
    /**
@@ -26,9 +29,12 @@ class BasicBufferMgr {
     */
    BasicBufferMgr(int numbuffs) {
       bufferpool = new Buffer[numbuffs];
+      availableFrames = new ArrayList<Integer>();
       numAvailable = numbuffs;
-      for (int i=0; i<numbuffs; i++)
-         bufferpool[i] = new Buffer();
+      for (int i=0; i<numbuffs; i++) {
+         availableFrames.add(i);
+         bufferpool[i] = new Buffer(i);
+      }
    }
    
    /**
@@ -59,6 +65,7 @@ class BasicBufferMgr {
          buff.assignToBlock(blk);
       }
       if (!buff.isPinned())
+         availableFrames.remove(buff.getIndex());
          numAvailable--;
       buff.pin();
       return buff;
@@ -78,6 +85,7 @@ class BasicBufferMgr {
       if (buff == null)
          return null;
       buff.assignToNew(filename, fmtr);
+      availableFrames.remove(buff.getIndex());
       numAvailable--;
       buff.pin();
       return buff;
@@ -90,6 +98,7 @@ class BasicBufferMgr {
    synchronized void unpin(Buffer buff) {
       buff.unpin();
       if (!buff.isPinned())
+         availableFrames.add(buff.getIndex());
          numAvailable++;
    }
    
@@ -111,9 +120,10 @@ class BasicBufferMgr {
    }
    
    private Buffer chooseUnpinnedBuffer() {
-      for (Buffer buff : bufferpool)
-         if (!buff.isPinned())
+      if (numAvailable > 0){
+         Buffer buff = bufferpool[availableFrames.get(0)];
          return buff;
+      }
       return null;
    }
 }

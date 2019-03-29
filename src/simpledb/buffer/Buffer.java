@@ -19,6 +19,7 @@ public class Buffer {
    private int pins = 0;
    private int modifiedBy = -1;  // negative means not modified
    private int logSequenceNumber = -1; // negative means no corresponding log record
+   private int index = 0;
 
    /**
     * Creates a new buffer, wrapping a new 
@@ -34,7 +35,9 @@ public class Buffer {
     * {@link simpledb.server.SimpleDB#initFileAndLogMgr(String)} or
     * is called first.
     */
-   public Buffer() {}
+   public Buffer(int ind) {
+      this.index = ind;
+   }
    
    /**
     * Returns the integer value at the specified offset of the
@@ -187,4 +190,12 @@ public class Buffer {
       blk = contents.append(filename);
       pins = 0;
    }
+
+   /**
+    * Gets Index where this buffer is
+    */
+   int getIndex(){
+      return index;
+   }
+
 }
