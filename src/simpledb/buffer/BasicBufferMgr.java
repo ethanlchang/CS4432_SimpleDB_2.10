@@ -4,6 +4,14 @@ import simpledb.file.*;
 
 import java.util.ArrayList;
 
+
+/**
+ * Questions:
+ * Emptyframe = one that is unpinned?
+ * How to hash a page?
+ * (2.4 Flush) Doesn't flush already do this?
+ */
+
 /**
  * Manages the pinning and unpinning of buffers to blocks.
  * @author Edward Sciore
@@ -101,6 +109,15 @@ class BasicBufferMgr {
          availableFrames.add(buff.getIndex());
          numAvailable++;
    }
+
+   synchronized int findPage(Page p){
+      // Find it
+      for (Buffer buff : bufferpool){
+         if(buff.containsPage(p)){
+            return buff.getIndex();
+         }
+      }
+   }
    
    /**
     * Returns the number of available (i.e. unpinned) buffers.
@@ -126,4 +143,5 @@ class BasicBufferMgr {
       }
       return null;
    }
+
 }

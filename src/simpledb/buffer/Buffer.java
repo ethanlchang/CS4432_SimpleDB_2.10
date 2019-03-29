@@ -38,7 +38,14 @@ public class Buffer {
    public Buffer(int ind) {
       this.index = ind;
    }
-   
+
+   /**
+    * Compare to see if same
+    */
+   public boolean containsPage(Page p){
+      return contents == p;
+   }
+
    /**
     * Returns the integer value at the specified offset of the
     * buffer's page.
