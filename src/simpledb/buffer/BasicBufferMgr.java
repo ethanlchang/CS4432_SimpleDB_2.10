@@ -33,6 +33,13 @@ class BasicBufferMgr {
     * Thus this constructor cannot be called until 
     * {@link simpledb.server.SimpleDB#initFileAndLogMgr(String)} or
     * is called first.
+    *
+    * CS4432-Project1:
+    * Added availableFrames, which stores the indexes of
+    * each Buffer that can have a frame inserted
+    * Here availableframes is initialized with the
+    * Buffers in bufferpool
+    *
     * @param numbuffs the number of buffer slots to allocate
     */
    BasicBufferMgr(int numbuffs) {
@@ -61,6 +68,10 @@ class BasicBufferMgr {
     * then that buffer is used;  
     * otherwise, an unpinned buffer from the pool is chosen.
     * Returns a null value if there are no available buffers.
+    *
+    * CS4432-Project1:
+    * when a buffer is pinned, its index is removed from availableFrames
+    *
     * @param blk a reference to a disk block
     * @return the pinned buffer
     */
@@ -84,6 +95,10 @@ class BasicBufferMgr {
     * pins a buffer to it. 
     * Returns null (without allocating the block) if 
     * there are no available buffers.
+    *
+    * CS4432-Project1:
+    * when a buffer is pinned, its index is removed from availableFrames
+    *
     * @param filename the name of the file
     * @param fmtr a pageformatter object, used to format the new block
     * @return the pinned buffer
@@ -101,6 +116,10 @@ class BasicBufferMgr {
    
    /**
     * Unpins the specified buffer.
+    *
+    * CS4432-Project1:
+    * when a buffer is unpinned, its index is added to availableFrames
+    *
     * @param buff the buffer to be unpinned
     */
    synchronized void unpin(Buffer buff) {
@@ -136,7 +155,13 @@ class BasicBufferMgr {
       }
       return null;
    }
-   
+
+   /**
+    * CS4432-Project1:
+    * Now checks if there are buffers available
+    * if true, it returns the first buffer from
+    * the availableFrames Arraylist
+    */
    private Buffer chooseUnpinnedBuffer() {
       if (numAvailable > 0){
          Buffer buff = bufferpool[availableFrames.get(0)];

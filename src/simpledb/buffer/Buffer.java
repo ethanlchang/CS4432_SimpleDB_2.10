@@ -199,6 +199,9 @@ public class Buffer {
    }
 
    /**
+    * CS4432-Project1:
+    * Added index variable to buffer and getIndex()
+    * for BasicBufferMgr to keep track of each buffer
     * Gets Index where this buffer is
     */
    int getIndex(){
