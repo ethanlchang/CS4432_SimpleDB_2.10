@@ -130,6 +130,12 @@ class BasicBufferMgr {
          numAvailable++;
    }
 
+   /**
+    * CS4432-Project1:
+    * checks to see if the given page exists in the bufferpool already
+    * @param p Page to find
+    * @return index of buffer, -1 if not found
+    */
    synchronized int findPage(Page p){
       // Find it
       for (Buffer buff : bufferpool){
