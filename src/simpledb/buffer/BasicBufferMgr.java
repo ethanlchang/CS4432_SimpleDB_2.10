@@ -11,6 +11,7 @@ import java.util.Arrays;
  * Emptyframe = one that is unpinned?
  * How to hash a page?
  * (2.4 Flush) Doesn't flush already do this?
+ * Where exactly do we look at & print out buffer (whenever its adding a page? is there a way we should control startup so it knows its in testing?)
  */
 
 /**
