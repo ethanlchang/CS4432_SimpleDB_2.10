@@ -208,4 +208,18 @@ public class Buffer {
       return index;
    }
 
+   /**
+    * CS4432-Project1:
+    * Added toString() for testing
+    * returns a string listing
+    * the buffer's index,
+    * the number of the block it is allocated to,
+    * and whether it is pinned
+    */
+   @Override
+   public String toString() {
+      return "Buffer: " + index
+              + "\nAllocated to block: " + blk.number()
+              + "\nIs pinned: " + isPinned();
+   }
 }

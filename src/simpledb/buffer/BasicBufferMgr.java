@@ -3,6 +3,7 @@ package simpledb.buffer;
 import simpledb.file.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -170,4 +171,20 @@ class BasicBufferMgr {
       return null;
    }
 
+   /**
+    * CS4432-Project1:
+    * Added toString() for testing
+    * returns a string listing
+    * the number of buffers
+    * and the t0String() for each buffer
+    */
+   @Override
+   public String toString() {
+      String output = "BasicBufferMgr:\n"
+              + "Number of Buffers: " + bufferpool.length + "\n"
+              + "Buffers:\n\n";
+      for (Buffer buff : bufferpool)
+         output += "" + buff.toString() + "\n";
+      return output;
+   }
 }

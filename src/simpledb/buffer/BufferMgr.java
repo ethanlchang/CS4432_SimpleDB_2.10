@@ -121,4 +121,14 @@ public class BufferMgr {
    private boolean waitingTooLong(long starttime) {
       return System.currentTimeMillis() - starttime > MAX_TIME;
    }
+
+   /**
+    * CS4432-Project1:
+    * Added toString() for testing
+    * returns a string of the BasicBufferMgr used by the BufferMgr
+    */
+   @Override
+   public String toString() {
+      return "BufferMgr:\n\n" + bufferMgr.toString();
+   }
 }
