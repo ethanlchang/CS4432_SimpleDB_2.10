@@ -3,14 +3,16 @@ package simpledb.buffer;
 import simpledb.file.*;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Arrays;
 
 
 /**
  * Questions:
- * Emptyframe = one that is unpinned?
- * How to hash a page?
- * (2.4 Flush) Doesn't flush already do this?
+ * 2.1 is done?
+ * How to hash a page? Is it supposed to be block(Blocks have IDs)?
+ * (2.4 Flush) Doesn't flush already do this? and pins counter is already in buffer (If its there and working then youre all set)
  * Where exactly do we look at & print out buffer (whenever its adding a page? is there a way we should control startup so it knows its in testing?)
  */
 
@@ -22,6 +24,7 @@ import java.util.Arrays;
 class BasicBufferMgr {
    private Buffer[] bufferpool;
    private ArrayList<Integer> availableFrames;
+   private Map<Integer, Integer> blkLocations;
    private int numAvailable;
    
    /**
@@ -47,6 +50,7 @@ class BasicBufferMgr {
    BasicBufferMgr(int numbuffs) {
       bufferpool = new Buffer[numbuffs];
       availableFrames = new ArrayList<Integer>();
+      blkLocations = new HashMap<Integer, Integer>();
       numAvailable = numbuffs;
       for (int i=0; i<numbuffs; i++) {
          availableFrames.add(i);
@@ -60,8 +64,12 @@ class BasicBufferMgr {
     */
    synchronized void flushAll(int txnum) {
       for (Buffer buff : bufferpool)
-         if (buff.isModifiedBy(txnum))
-         buff.flush();
+         if (buff.isModifiedBy(txnum)) {
+            blkLocations.remove(buff.block().hashCode());
+            buff.flush();
+            blkLocations.put(buff.block().hashCode(), buff.getIndex());
+         }
+
    }
    
    /**
@@ -78,13 +86,19 @@ class BasicBufferMgr {
     * @return the pinned buffer
     */
    synchronized Buffer pin(Block blk) {
-      Buffer buff = findExistingBuffer(blk);
-      if (buff == null) {
-         buff = chooseUnpinnedBuffer();
-         if (buff == null)
+      Buffer buff = findExistingBuffer(blk);  // Check if block is already in bufferpool
+      if (buff == null) {                     // If it isnt in bufferpool
+         buff = chooseUnpinnedBuffer();       // Find unpinned buffer to replace
+         if (buff == null)                    // If no unpinned buffers
             return null;
-         buff.assignToBlock(blk);
+
+         if (buff.block() != null) {
+            blkLocations.remove(buff.block().hashCode());  // Remove old pairing
+         }
+         buff.assignToBlock(blk);             // But the block in the buffer
+         blkLocations.put(blk.hashCode(), buff.getIndex());  // Store the pairing
       }
+      // If not already pinned, pin
       if (!buff.isPinned())
          availableFrames.remove(buff.getIndex());
          numAvailable--;
@@ -109,7 +123,11 @@ class BasicBufferMgr {
       Buffer buff = chooseUnpinnedBuffer();
       if (buff == null)
          return null;
+      if (buff.block() != null) {
+         blkLocations.remove(buff.block().hashCode());  // Remove old pairing
+      }
       buff.assignToNew(filename, fmtr);
+      blkLocations.put(buff.block().hashCode(), buff.getIndex());  // Store the pairing
       availableFrames.remove(buff.getIndex());
       numAvailable--;
       buff.pin();
@@ -154,15 +172,44 @@ class BasicBufferMgr {
    int available() {
       return numAvailable;
    }
-   
+
+   /**
+    * CS4432-Project1:
+    * (2.2) checks to see if the given block exists in the bufferpool already
+    * @param blk block its looking for
+    * @return buffer the block is in, null if not in bufferpool
+    */
+
    private Buffer findExistingBuffer(Block blk) {
-      for (Buffer buff : bufferpool) {
-         Block b = buff.block();
-         if (b != null && b.equals(blk))
+      //System.out.println(this.toString());
+      //System.out.println("Block Hash: " + blk.hashCode());
+      // If block isnt in bufferpool
+      if (blkLocations.containsKey(blk.hashCode())) {
+         int bloc = blkLocations.get(blk.hashCode());
+         Buffer buff = bufferpool[bloc];
+         //System.out.println("REPEAT: Block hash: " + buff.block().hashCode() + ", Block Loc: " + buff.getIndex() + ", " + buff.block().equals(blk));
+         if (buff.block().equals(blk))
             return buff;
       }
       return null;
    }
+
+   /*
+   // Old function we replaced above
+   private Buffer findExistingBuffer(Block blk) {
+      System.out.println("Block ID: " + blk.number());
+      for (Buffer buff : bufferpool) {
+         Block b = buff.block();
+         if (b != null && b.equals(blk)){
+
+            System.out.println("REPEAT: Block ID: " + buff.block().number() + ", Block Loc: " + buff.getIndex());
+            return buff;
+         }
+      }
+      return null;
+   }
+   //*/
+
 
    /**
     * CS4432-Project1:
@@ -172,6 +219,9 @@ class BasicBufferMgr {
     */
    private Buffer chooseUnpinnedBuffer() {
       if (numAvailable > 0){
+         // Put Replacement policy (2.3) in here
+         // Loop through all buffers looking for LRU or null blocks
+
          Buffer buff = bufferpool[availableFrames.get(0)];
          return buff;
       }

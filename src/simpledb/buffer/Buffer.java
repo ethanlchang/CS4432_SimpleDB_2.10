@@ -218,8 +218,12 @@ public class Buffer {
     */
    @Override
    public String toString() {
+       int bID = -1;
+       if (blk != null){
+           bID = blk.hashCode();
+       }
       return "Buffer: " + index
-              + "\nAllocated to block: " + blk.number()
+              + "\nAllocated to block: " + bID
               + "\nIs pinned: " + isPinned();
    }
 }
