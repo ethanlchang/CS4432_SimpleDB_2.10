@@ -21,6 +21,16 @@ public class Buffer {
    private int logSequenceNumber = -1; // negative means no corresponding log record
    private int index = 0;
 
+   public int getClockCounter() {
+      return clockCounter;
+   }
+
+   public void setClockCounter(int clockCounter) {
+      this.clockCounter = clockCounter;
+   }
+
+   private int clockCounter = 0;
+
    /**
     * Creates a new buffer, wrapping a new 
     * {@link simpledb.file.Page page}.  
@@ -89,6 +99,10 @@ public class Buffer {
       if (lsn >= 0)
 	      logSequenceNumber = lsn;
       contents.setInt(offset, val);
+   }
+
+   public int getLogSeqNum(){
+      return logSequenceNumber;
    }
 
    /**
@@ -224,6 +238,7 @@ public class Buffer {
        }
       return "Buffer: " + index
               + "\nAllocated to block: " + bID
+              + "\nLog Sequence Number: " + logSequenceNumber
               + "\nIs pinned: " + isPinned();
    }
 }

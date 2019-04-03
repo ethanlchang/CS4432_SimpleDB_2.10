@@ -26,6 +26,7 @@ class BasicBufferMgr {
    private ArrayList<Integer> availableFrames;
    private Map<Integer, Integer> blkLocations;
    private int numAvailable;
+   private int clockOffset;
    
    /**
     * Creates a buffer manager having the specified number 
@@ -52,6 +53,7 @@ class BasicBufferMgr {
       availableFrames = new ArrayList<Integer>();
       blkLocations = new HashMap<Integer, Integer>();
       numAvailable = numbuffs;
+      clockOffset = 0;
       for (int i=0; i<numbuffs; i++) {
          availableFrames.add(i);
          bufferpool[i] = new Buffer(i);
@@ -99,9 +101,12 @@ class BasicBufferMgr {
          blkLocations.put(blk.hashCode(), buff.getIndex());  // Store the pairing
       }
       // If not already pinned, pin
-      if (!buff.isPinned())
-         availableFrames.remove(buff.getIndex());
+      if (!buff.isPinned()) {
+         System.out.println(availableFrames);
+         System.out.println("Removing buffer: " + buff.getIndex());
+         availableFrames.remove(availableFrames.indexOf(buff.getIndex()));
          numAvailable--;
+      }
       buff.pin();
       return buff;
    }
@@ -127,8 +132,10 @@ class BasicBufferMgr {
          blkLocations.remove(buff.block().hashCode());  // Remove old pairing
       }
       buff.assignToNew(filename, fmtr);
+      System.out.println(availableFrames);
+      System.out.println("Removing buffer: " + buff.getIndex());
       blkLocations.put(buff.block().hashCode(), buff.getIndex());  // Store the pairing
-      availableFrames.remove(buff.getIndex());
+      availableFrames.remove(availableFrames.indexOf(buff.getIndex()));
       numAvailable--;
       buff.pin();
       return buff;
@@ -144,25 +151,11 @@ class BasicBufferMgr {
     */
    synchronized void unpin(Buffer buff) {
       buff.unpin();
-      if (!buff.isPinned())
+      if (!buff.isPinned()) {
+         System.out.println("Adding buffer: " + buff.getIndex());
          availableFrames.add(buff.getIndex());
          numAvailable++;
-   }
-
-   /**
-    * CS4432-Project1:
-    * checks to see if the given page exists in the bufferpool already
-    * @param p Page to find
-    * @return index of buffer, -1 if not found
-    */
-   synchronized int findPage(Page p){
-      // Find it
-      for (Buffer buff : bufferpool){
-         if(buff.containsPage(p)){
-            return buff.getIndex();
-         }
       }
-      return -1;
    }
    
    /**
@@ -179,7 +172,6 @@ class BasicBufferMgr {
     * @param blk block its looking for
     * @return buffer the block is in, null if not in bufferpool
     */
-
    private Buffer findExistingBuffer(Block blk) {
       //System.out.println(this.toString());
       //System.out.println("Block Hash: " + blk.hashCode());
@@ -220,10 +212,19 @@ class BasicBufferMgr {
    private Buffer chooseUnpinnedBuffer() {
       if (numAvailable > 0){
          // Put Replacement policy (2.3) in here
-         // Loop through all buffers looking for LRU or null blocks
-
-         Buffer buff = bufferpool[availableFrames.get(0)];
-         return buff;
+         // Loop through all unpinned buffers looking for LRU or null blocks
+         while(numAvailable > 0){
+            clockOffset = clockOffset % availableFrames.size();
+            Buffer buff = bufferpool[availableFrames.get(clockOffset)];
+            if (buff.getClockCounter() == 0){
+               clockOffset++;
+               return buff;
+            }
+            else{
+               clockOffset++;
+               buff.setClockCounter(chooseUnpinnedBuffer().getClockCounter()-1);
+            }
+         }
       }
       return null;
    }
