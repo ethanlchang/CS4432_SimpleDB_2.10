@@ -156,7 +156,7 @@ public class Testing {
             }
         }
 
-
+        /* JK actually between queries
         //Buffer Manager Testing
         //Clock Policy
 
@@ -195,7 +195,7 @@ public class Testing {
         testBufferMgr.pin(block5);
         buff10 = testBufferMgr.pin(block10);
         testBufferMgr.unpin(buff10);
-
+        */
 
     }
 }
