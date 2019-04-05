@@ -203,7 +203,7 @@ class BasicBufferMgr {
    private Buffer chooseUnpinnedBuffer() {
       if (numAvailable > 0){
          // Put Replacement policy (2.3) in here
-         // Loop through all unpinned buffers looking for LRU or null blocks
+         // Loop through all unpinned buffers looking for Clock or null blocks
          while(numAvailable > 0){
             clockOffset = clockOffset % availableFrames.size();
             Buffer buff = bufferpool[availableFrames.get(clockOffset)];
