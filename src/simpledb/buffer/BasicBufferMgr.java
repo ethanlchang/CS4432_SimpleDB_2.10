@@ -240,6 +240,7 @@ class BasicBufferMgr {
    public String toString() {
       String output = "BasicBufferMgr:\n"
               + "Number of Buffers: " + bufferpool.length + "\n"
+              + "Clock Position: " + clockOffset + "\n"
               + "Buffers:\n\n";
       for (Buffer buff : bufferpool)
          output += "" + buff.toString() + "\n";

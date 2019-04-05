@@ -238,7 +238,7 @@ public class Buffer {
        }
       return "Buffer: " + index
               + "\nAllocated to block: " + bID
-              + "\nLog Sequence Number: " + logSequenceNumber
+              + "\nClock Counter: " + clockCounter
               + "\nIs pinned: " + isPinned();
    }
 }
