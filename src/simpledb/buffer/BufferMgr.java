@@ -57,6 +57,8 @@ public class BufferMgr {
          }
          if (buff == null)
             throw new BufferAbortException();
+         System.out.println("\n\nBuffer Manager PIN Results\n");
+         System.out.println(toString() + "\n");
          return buff;
       }
       catch(InterruptedException e) {
@@ -83,6 +85,8 @@ public class BufferMgr {
          }
          if (buff == null)
             throw new BufferAbortException();
+         System.out.println("\n\nBuffer Manager PIN NEW Results:\n");
+         System.out.println(toString());
          return buff;
       }
       catch(InterruptedException e) {
@@ -100,6 +104,8 @@ public class BufferMgr {
       bufferMgr.unpin(buff);
       if (!buff.isPinned())
          notifyAll();
+      System.out.println("\n\nBuffer Manager UNPIN Results:\n");
+      System.out.println(toString() + "\n");
    }
    
    /**
@@ -129,6 +135,6 @@ public class BufferMgr {
     */
    @Override
    public String toString() {
-      return "BufferMgr:\n\n" + bufferMgr.toString();
+      return bufferMgr.toString() + "\n--------------------\n\n";
    }
 }

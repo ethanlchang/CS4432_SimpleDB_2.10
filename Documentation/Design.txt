@@ -3,7 +3,7 @@ an Arraylist of buffer indices that are unpinned. Whenever
 a buffer is pinned is is removed from available frames and
 whenever a buffer is unpinned it is added to available frames.
 We added an index to the buffers to store what position in the
-bufferpool this buffer is in. This allows us to readd the
+bufferpool this buffer is in. This allows us to read the
 index to available frames in unpin where we only know the
 buffer. 
 When we find a empty buffer to put the new buffer in we use
@@ -13,7 +13,7 @@ can be replaced. We used a clock replacement policy. The
 buffermanager keeps track of where the clock left off. Each
 buffer stores a clock counter saying how much longer to 
 keep it. The clock loops through the available frames 
-decementing every buffer's clock counter until it finds
+decrementing every buffer's clock counter until it finds
 one that has a clock counter of zero.
 To make it easier to find blocks that already exist in the
 bufferpool we implemented a hashmap that tracked block's 

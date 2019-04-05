@@ -1,9 +1,5 @@
 import java.sql.*;
 import java.util.ArrayList;
-
-import simpledb.buffer.Buffer;
-import simpledb.buffer.BufferMgr;
-import simpledb.file.Block;
 import simpledb.remote.SimpleDriver;
 
 public class Testing {
@@ -156,46 +152,7 @@ public class Testing {
             }
         }
 
-        /* JK actually between queries
-        //Buffer Manager Testing
-        //Clock Policy
-
-        //1*, 2*, 3*, 1u, 4*, 5*, 3u, 4u, 1, 6, 7, 8*, 9*, 5, 10
-        // 1* = pin 1, 1u = unpin 1, 1 = access 1
-        BufferMgr testBufferMgr = new BufferMgr(7);
-        Block block1, block2, block3, block4, block5, block6, block7, block8, block9, block10;
-        Buffer buff1, buff3, buff4, buff6, buff7, buff10;
-        block1 = new Block("fldcat.tbl", 1);
-        block2 = new Block("B", 2);
-        block3 = new Block("C", 3);
-        block4 = new Block("D", 4);
-        block5 = new Block("E", 5);
-        block6 = new Block("F", 6);
-        block7 = new Block("G", 7);
-        block8 = new Block("H", 8);
-        block9 = new Block("I", 9);
-        block10 = new Block("J", 10);
-
-        buff1 = testBufferMgr.pin(block1);
-        testBufferMgr.pin(block2);
-        buff3 = testBufferMgr.pin(block3);
-        testBufferMgr.unpin(buff1);
-        buff4 = testBufferMgr.pin(block4);
-        testBufferMgr.pin(block5);
-        testBufferMgr.unpin(buff3);
-        testBufferMgr.unpin(buff4);
-        buff1 = testBufferMgr.pin(block1);
-        testBufferMgr.unpin(buff1);
-        buff6 = testBufferMgr.pin(block6);
-        testBufferMgr.unpin(buff6);
-        buff7 = testBufferMgr.pin(block7);
-        testBufferMgr.unpin(buff7);
-        testBufferMgr.pin(block8);
-        testBufferMgr.pin(block9);
-        testBufferMgr.pin(block5);
-        buff10 = testBufferMgr.pin(block10);
-        testBufferMgr.unpin(buff10);
-        */
-
+        //Clear Tables
+        //
     }
 }

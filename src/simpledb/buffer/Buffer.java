@@ -20,6 +20,8 @@ public class Buffer {
    private int modifiedBy = -1;  // negative means not modified
    private int logSequenceNumber = -1; // negative means no corresponding log record
    private int index = 0;
+   private int clockCounter = 0;
+
 
    public int getClockCounter() {
       return clockCounter;
@@ -28,8 +30,6 @@ public class Buffer {
    public void setClockCounter(int clockCounter) {
       this.clockCounter = clockCounter;
    }
-
-   private int clockCounter = 0;
 
    /**
     * Creates a new buffer, wrapping a new 
@@ -236,10 +236,17 @@ public class Buffer {
        int bID = -1;
        if (blk != null){
            bID = blk.hashCode();
+          return "Buffer: " + index
+                  + "\nAllocated to block: " + bID
+                  + "\nClock Counter: " + clockCounter
+                  + "\nIs pinned: " + isPinned();
        }
-      return "Buffer: " + index
-              + "\nAllocated to block: " + bID
-              + "\nClock Counter: " + clockCounter
-              + "\nIs pinned: " + isPinned();
+       else
+       {
+          return "Buffer: " + index
+                  + "\nAllocated to block: NONE"
+                  + "\nClock Counter: " + clockCounter
+                  + "\nIs pinned: " + isPinned();
+       }
    }
 }

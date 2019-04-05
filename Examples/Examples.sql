@@ -17,7 +17,6 @@ CREATE TABLE Account(
     Balance FLOAT,
     OwnerSSN INT,
     BankBranch VARCHAR(25),
-
 );
 
 //populate tables

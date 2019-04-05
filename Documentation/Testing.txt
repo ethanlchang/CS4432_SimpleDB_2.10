@@ -1,0 +1,6 @@
+Testing.txt
+
+To make sure SimpleDB sitll works;
+
+
+To test the new features (Clock policy, finds empty frame, etc.):
