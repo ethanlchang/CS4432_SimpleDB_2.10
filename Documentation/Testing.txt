@@ -1,6 +1,287 @@
 Testing.txt
 
-To make sure SimpleDB sitll works;
+To make sure SimpleDB still works as it did originally, we run
+the example SQL we originally wrote in Examples.java
+
+The buffer information from running these tests (as well as Startup)
+also allows us to see how the new features work.
+
+========================================================================================================================
+
+Finding an empty frame:
+This only happens in Startup, since it fills up the buffers,
+meaning by the time we run Testing.java, it will only be using
+the clock replacement policy.
+
+Each time a buffer is pinned, it grabs the first available on
+the list, here it grabs 0, then 1, then 2. When a buffer is
+unpinned, it moves the end of the list so that it will always
+cycle through all empty frames before clock replacement.
+
+==============================================================
+
+Available buffers: [0, 1, 2, 3, 4, 5, 6, 7]
+Pinning buffer: 0
+Available buffers: [1, 2, 3, 4, 5, 6, 7]
 
 
-To test the new features (Clock policy, finds empty frame, etc.):
+Buffer Manager PIN Results
+
+BasicBufferMgr:
+Number of Buffers: 8
+Clock Position: 0
+Buffers:
+
+Buffer: 0
+Allocated to block: 1806850661
+Clock Counter: 1
+Is pinned: true
+Buffer: 1
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 2
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 3
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 4
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 5
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 6
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 7
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+
+--------------------
+
+
+
+Available buffers: [1, 2, 3, 4, 5, 6, 7]
+Unpinning buffer: 0
+Available buffers: [1, 2, 3, 4, 5, 6, 7, 0]
+
+
+Buffer Manager UNPIN Results:
+
+BasicBufferMgr:
+Number of Buffers: 8
+Clock Position: 0
+Buffers:
+
+Buffer: 0
+Allocated to block: 1806850661
+Clock Counter: 1
+Is pinned: false
+Buffer: 1
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 2
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 3
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 4
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 5
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 6
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 7
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+
+--------------------
+
+
+
+[file fldcat.tbl, block 0]
+Available buffers: [1, 2, 3, 4, 5, 6, 7, 0]
+Pinning buffer: 1
+Available buffers: [2, 3, 4, 5, 6, 7, 0]
+
+
+Buffer Manager PIN Results
+
+BasicBufferMgr:
+Number of Buffers: 8
+Clock Position: 0
+Buffers:
+
+Buffer: 0
+Allocated to block: 1806850661
+Clock Counter: 1
+Is pinned: false
+Buffer: 1
+Allocated to block: -1527684667
+Clock Counter: 1
+Is pinned: true
+Buffer: 2
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 3
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 4
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 5
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 6
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 7
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+
+--------------------
+
+
+
+Available buffers: [2, 3, 4, 5, 6, 7, 0]
+Unpinning buffer: 1
+Available buffers: [2, 3, 4, 5, 6, 7, 0, 1]
+
+
+Buffer Manager UNPIN Results:
+
+BasicBufferMgr:
+Number of Buffers: 8
+Clock Position: 0
+Buffers:
+
+Buffer: 0
+Allocated to block: 1806850661
+Clock Counter: 1
+Is pinned: false
+Buffer: 1
+Allocated to block: -1527684667
+Clock Counter: 1
+Is pinned: false
+Buffer: 2
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 3
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 4
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 5
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 6
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 7
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+
+--------------------
+
+
+
+[file fldcat.tbl, block 1]
+Available buffers: [2, 3, 4, 5, 6, 7, 0, 1]
+Pinning buffer: 2
+Available buffers: [3, 4, 5, 6, 7, 0, 1]
+
+
+Buffer Manager PIN Results
+
+BasicBufferMgr:
+Number of Buffers: 8
+Clock Position: 0
+Buffers:
+
+Buffer: 0
+Allocated to block: 1806850661
+Clock Counter: 1
+Is pinned: false
+Buffer: 1
+Allocated to block: -1527684667
+Clock Counter: 1
+Is pinned: false
+Buffer: 2
+Allocated to block: -1527684636
+Clock Counter: 1
+Is pinned: true
+Buffer: 3
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 4
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 5
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 6
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+Buffer: 7
+Allocated to block: NONE
+Clock Counter: 0
+Is pinned: false
+
+--------------------
+
+========================================================================================================================
+
+
+
+==============================================================
+
+
+========================================================================================================================
+
+
+
+==============================================================
+
+
+========================================================================================================================
+
+
+
+==============================================================
+

@@ -14,14 +14,14 @@ public class Testing {
             //Clear out SQL Tables
             s = "delete from PERSON ";
             stmt.executeUpdate(s);
-            System.out.println("Table PERSON deleted.");
+            System.out.println("Table PERSON cleared.");
             s = "delete from ACCOUNT ";
             stmt.executeUpdate(s);
-            System.out.println("Table ACCOUNT deleted.");
+            System.out.println("Table ACCOUNT cleared.");
 
             /* Person
             SSN - int
-            Name - vachar(50)
+            Name - varchar(50)
             AccountNumber - int
              */
             s = "create table PERSON(SSN int, Name varchar(50), AccountNumber int)";
@@ -137,6 +137,16 @@ public class Testing {
                 System.out.println("Expected: " + expected + ", Actual: " + results);
             }
             rs.close();
+
+            System.out.println("\n");
+
+            //Clear out SQL Tables
+            s = "delete from PERSON ";
+            stmt.executeUpdate(s);
+            System.out.println("Table PERSON cleared.");
+            s = "delete from ACCOUNT ";
+            stmt.executeUpdate(s);
+            System.out.println("Table ACCOUNT cleared.");
 
         }
         catch(SQLException e) {

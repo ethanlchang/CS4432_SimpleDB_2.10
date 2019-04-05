@@ -170,35 +170,15 @@ class BasicBufferMgr {
     * @return buffer the block is in, null if not in bufferpool
     */
    private Buffer findExistingBuffer(Block blk) {
-      //System.out.println(this.toString());
-      //System.out.println("Block Hash: " + blk.hashCode());
       // If block isnt in bufferpool
       if (blkLocations.containsKey(blk.hashCode())) {
          int bloc = blkLocations.get(blk.hashCode());
          Buffer buff = bufferpool[bloc];
-         //System.out.println("REPEAT: Block hash: " + buff.block().hashCode() + ", Block Loc: " + buff.getIndex() + ", " + buff.block().equals(blk));
          if (buff.block().equals(blk))
             return buff;
       }
       return null;
    }
-
-   /*
-   // Old function we replaced above
-   private Buffer findExistingBuffer(Block blk) {
-      System.out.println("Block ID: " + blk.number());
-      for (Buffer buff : bufferpool) {
-         Block b = buff.block();
-         if (b != null && b.equals(blk)){
-
-            System.out.println("REPEAT: Block ID: " + buff.block().number() + ", Block Loc: " + buff.getIndex());
-            return buff;
-         }
-      }
-      return null;
-   }
-   //*/
-
 
    /**
     * CS4432-Project1:
@@ -214,7 +194,6 @@ class BasicBufferMgr {
             clockOffset = clockOffset % availableFrames.size();
             Buffer buff = bufferpool[availableFrames.get(clockOffset)];
             if (buff.getClockCounter() == 0){
-               clockOffset++;
                return buff;
             }
             else{
