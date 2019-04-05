@@ -194,6 +194,7 @@ class BasicBufferMgr {
             clockOffset = clockOffset % availableFrames.size();
             Buffer buff = bufferpool[availableFrames.get(clockOffset)];
             if (buff.getClockCounter() == 0){
+               clockOffset++;
                return buff;
             }
             else{

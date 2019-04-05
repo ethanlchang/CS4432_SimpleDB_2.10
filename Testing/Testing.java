@@ -107,7 +107,8 @@ public class Testing {
                     System.out.println("Test 2 - Passed");
                 else {
                     System.out.println("Test 2 - Failed");
-                    System.out.println("Expected: " + accountNum + ", " + balance + ", " + branch + " , Actual: " + expectedNumber + ", " + expectedBalance + ", " + expectedBranch);
+                    System.out.println("Expected: " + accountNum + ", " + balance + ", " + branch + " , Actual: "
+                            + expectedNumber + ", " + expectedBalance + ", " + expectedBranch);
                 }
             }
             rs.close();
@@ -125,7 +126,6 @@ public class Testing {
                 int balance = rs.getInt("balance");
                 String branch = rs.getString("bankbranch");
                 results.add(accountNum);
-                //System.out.println("Account Number: " + accountNum + "\nBalance: "  + balance + "\nBranch: " + branch);
             }
             ArrayList<Integer> expected = new ArrayList<Integer>();
             expected.add(4);
@@ -138,8 +138,8 @@ public class Testing {
             }
             rs.close();
 
-            System.out.println("\n");
 
+            System.out.println("\n");
             //Clear out SQL Tables
             s = "delete from PERSON ";
             stmt.executeUpdate(s);
@@ -162,7 +162,5 @@ public class Testing {
             }
         }
 
-        //Clear Tables
-        //
     }
 }
