@@ -7,15 +7,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Arrays;
 
-
-/**
- * Questions:
- * 2.1 is done?
- * How to hash a page? Is it supposed to be block(Blocks have IDs)?
- * (2.4 Flush) Doesn't flush already do this? and pins counter is already in buffer (If its there and working then youre all set)
- * Where exactly do we look at & print out buffer (whenever its adding a page? is there a way we should control startup so it knows its in testing?)
- */
-
 /**
  * Manages the pinning and unpinning of buffers to blocks.
  * @author Edward Sciore
