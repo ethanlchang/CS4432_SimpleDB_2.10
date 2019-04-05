@@ -1,3 +1,6 @@
+Ethan Chang, Ryan Racine
+Project 1: 
+
 To start you must run the startup program 
 (SimpleDB_2.10\src\simpledb\server\Startup)
 
