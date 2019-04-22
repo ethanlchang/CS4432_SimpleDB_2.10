@@ -11,7 +11,8 @@ import simpledb.query.*;
  * @author sciore
  */
 public class BasicUpdatePlanner implements UpdatePlanner {
-   
+
+   // TODO: delete from all indices as well
    public int executeDelete(DeleteData data, Transaction tx) {
       Plan p = new TablePlan(data.tableName(), tx);
       p = new SelectPlan(p, data.pred());
@@ -24,7 +25,8 @@ public class BasicUpdatePlanner implements UpdatePlanner {
       us.close();
       return count;
    }
-   
+
+   // TODO: Modify for all indices as well
    public int executeModify(ModifyData data, Transaction tx) {
       Plan p = new TablePlan(data.tableName(), tx);
       p = new SelectPlan(p, data.pred());
@@ -38,7 +40,8 @@ public class BasicUpdatePlanner implements UpdatePlanner {
       us.close();
       return count;
    }
-   
+
+   // TODO: Insert to all indices as well
    public int executeInsert(InsertData data, Transaction tx) {
       Plan p = new TablePlan(data.tableName(), tx);
       UpdateScan us = (UpdateScan) p.open();
