@@ -101,7 +101,9 @@ public class SimpleDB {
     * @return the system's planner for SQL commands
     */public static Planner planner() {
       QueryPlanner  qplanner = new BasicQueryPlanner();
-      UpdatePlanner uplanner = new BasicUpdatePlanner();
+      //UpdatePlanner uplanner = new BasicUpdatePlanner();
+      //CS4432 changed from BasicUpdatePlanner to IndexUpdatePlanner
+      UpdatePlanner uplanner = new IndexUpdatePlanner();
       return new Planner(qplanner, uplanner);
    }
 }
