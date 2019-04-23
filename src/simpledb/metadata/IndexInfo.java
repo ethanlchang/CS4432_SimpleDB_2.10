@@ -68,7 +68,15 @@ public class IndexInfo {
    public Index open() {
       Schema sch = schema();
       // Create new HashIndex for hash indexing
-      return new HashIndex(idxname, sch, tx);
+      if (idxtype == "sh") {
+         return new HashIndex(idxname, sch, tx);
+      }
+      else if(idxtype == "bt"){
+         return new BTreeIndex(idxname, sch, tx);
+      }
+      else{
+         return new HashIndex(idxname, sch, tx);
+      }
    }
    
    /**
