@@ -25,12 +25,11 @@ The output should look something  like this:
 Task 2 Extensible Hashing Test Results
   These results are copied from part of the Startup log
   when Project2Tests were run to display the Index
-  inserting records and extending when needed.
+  inserting records and doubling the directory when needed.
 
   NOTE: for some reason when it prints the Filename,
   it puts a 1 before the bucket index, so 10 = 0,
   11 = 1, 12 = 2, etc.
-
 
 
 New Extensible Hash Index Created
