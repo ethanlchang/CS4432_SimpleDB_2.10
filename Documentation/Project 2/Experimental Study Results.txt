@@ -1,0 +1,14 @@
+Testing Results:
+  Test1 Query took: 235
+  Test2 Query took: 8
+  Test3 Query took: 17
+  Test4 Query took: 13
+  Test1 Join took: 5
+  Test2 Join took: 7
+  Test3 Join took: 8
+  Test4 Join took: 6
+
+The indices seem to clearly speed up query time but slightly 
+lower join times. This makes sense because when it queries the 
+index makes it so it has to go through less I/Os, but when it
+joins it also has to join the idices as well which is an extra step.
