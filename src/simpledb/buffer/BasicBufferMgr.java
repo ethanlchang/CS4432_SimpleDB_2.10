@@ -93,10 +93,10 @@ class BasicBufferMgr {
       }
       // If not already pinned, pin
       if (!buff.isPinned()) {
-         System.out.println("Available buffers: " + availableFrames);
-         System.out.println("Pinning buffer: " + buff.getIndex());
+         //System.out.println("Available buffers: " + availableFrames);
+         //System.out.println("Pinning buffer: " + buff.getIndex());
          availableFrames.remove(availableFrames.indexOf(buff.getIndex()));
-         System.out.println("Available buffers: " + availableFrames);
+         //System.out.println("Available buffers: " + availableFrames);
          numAvailable--;
       }
       buff.pin();
@@ -125,11 +125,11 @@ class BasicBufferMgr {
          blkLocations.remove(buff.block().hashCode());  // Remove old pairing
       }
       buff.assignToNew(filename, fmtr);
-      System.out.println("Available buffers: " + availableFrames);
-      System.out.println("Pinning buffer: " + buff.getIndex());
+      //System.out.println("Available buffers: " + availableFrames);
+      //System.out.println("Pinning buffer: " + buff.getIndex());
       blkLocations.put(buff.block().hashCode(), buff.getIndex());  // Store the pairing
       availableFrames.remove(availableFrames.indexOf(buff.getIndex()));
-      System.out.println("Available buffers: " + availableFrames);
+      //System.out.println("Available buffers: " + availableFrames);
       numAvailable--;
       buff.pin();
       buff.setClockCounter(1);
@@ -147,10 +147,10 @@ class BasicBufferMgr {
    synchronized void unpin(Buffer buff) {
       buff.unpin();
       if (!buff.isPinned()) {
-          System.out.println("Available buffers: " + availableFrames);
-          System.out.println("Unpinning buffer: " + buff.getIndex());
+          //System.out.println("Available buffers: " + availableFrames);
+          //System.out.println("Unpinning buffer: " + buff.getIndex());
           availableFrames.add(buff.getIndex());
-          System.out.println("Available buffers: " + availableFrames);
+          //System.out.println("Available buffers: " + availableFrames);
           numAvailable++;
       }
    }

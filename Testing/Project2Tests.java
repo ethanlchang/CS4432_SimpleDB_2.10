@@ -45,7 +45,7 @@ public class Project2Tests {
                     ")");
 
             s.executeUpdate("create sh index idx1 on test1 (a1)");
-            //s.executeUpdate("create ex index idx2 on test2 (a1)");
+            s.executeUpdate("create ex index idx2 on test2 (a1)");
             s.executeUpdate("create bt index idx3 on test3 (a1)");
             for(int i=1;i<6;i++)
             {

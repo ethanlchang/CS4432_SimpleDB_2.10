@@ -194,7 +194,7 @@ public class Buffer {
       flush();
       blk = b;
       contents.read(blk);
-      System.out.println(blk.toString());
+      //System.out.println(blk.toString());
       pins = 0;
    }
 
