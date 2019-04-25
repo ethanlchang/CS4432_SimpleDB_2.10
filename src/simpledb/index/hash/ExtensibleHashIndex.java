@@ -1,5 +1,6 @@
 package simpledb.index.hash;
 
+import simpledb.buffer.PageFormatter;
 import simpledb.index.Index;
 import simpledb.query.Constant;
 import simpledb.query.TableScan;
@@ -12,7 +13,7 @@ import static simpledb.file.Page.BLOCK_SIZE;
 
 
 /**
- * Am extensible hash implementation of the Index interface.
+ * An extensible hash implementation of the Index interface.
  *
  */
 public class ExtensibleHashIndex implements Index {
@@ -23,11 +24,11 @@ public class ExtensibleHashIndex implements Index {
 	private TableScan ts = null;
 
 	private static int MAX_BUCKET_SIZE; //number of records that can fit in a bucket
-	private int globalDepth, numBuckets;
-	private ArrayList<Bucket> directory;
+	private static int globalDepth, numBuckets;
+	private static ArrayList<Bucket> directory;
 
 	/**
-	 * Opens a hash index for the specified index.
+	 * Opens an extensible hash index for the specified index.
 	 *
 	 * @param idxname the name of the index
 	 * @param sch     the schema of the index records
@@ -39,15 +40,19 @@ public class ExtensibleHashIndex implements Index {
 		this.tx = tx;
 
 		TableInfo ti = new TableInfo(idxname + "0", sch);
-		MAX_BUCKET_SIZE = BLOCK_SIZE / ti.recordLength();
-		globalDepth = 1;
-		numBuckets = (int) Math.pow(2, globalDepth);
-		directory = new ArrayList<>();
-		directory.add(new Bucket(0, globalDepth, MAX_BUCKET_SIZE));
-		directory.add(new Bucket(1, globalDepth, MAX_BUCKET_SIZE));
+		MAX_BUCKET_SIZE = 4;// BLOCK_SIZE / ti.recordLength();
 
-		System.out.println("New Extensible Hash Index Created");
-		System.out.println();
+		if (directory == null) {
+			globalDepth = 1;
+			numBuckets = (int) Math.pow(2, globalDepth);
+			directory = new ArrayList<>();
+			directory.add(new Bucket(0, globalDepth, MAX_BUCKET_SIZE));
+			directory.add(new Bucket(1, globalDepth, MAX_BUCKET_SIZE));
+			System.out.println("New Extensible Hash Index Created");
+			System.out.println();
+		}
+
+
 		printTable();
 	}
 
@@ -68,7 +73,9 @@ public class ExtensibleHashIndex implements Index {
 		String tblname = idxname + bucket;
 		TableInfo ti = new TableInfo(tblname, sch);
 		ts = new TableScan(ti, tx);
-		System.out.println("Inserting " + searchkey + " into bucket " + tblname);
+		System.out.println("Inserting " + searchkey + " into bucket " + tblname +
+				" (bucket " + bucket + ")");
+		System.out.println();
 	}
 
 	/**
@@ -104,66 +111,70 @@ public class ExtensibleHashIndex implements Index {
 	 * @see Index#insert(Constant, RID)
 	 */
 	public void insert(Constant val, RID rid) {
+		System.out.println("=======================================");
 		int insertBucketIndex = getBucketIndex(val);
 		Bucket insertToBucket = directory.get(insertBucketIndex);
+		int oldLocalDepth, newLocalDepth, newBucketIndex;
+		oldLocalDepth = insertToBucket.getLocalDepth();
+		newLocalDepth = insertToBucket.getLocalDepth() + 1;
+		newBucketIndex = insertBucketIndex + (int) Math.pow(2, oldLocalDepth);
+		boolean splitting = false;
 
 		if (insertToBucket.isFull()) {
 			//if bucket is at global limit, double directory beforehand
-			if (insertToBucket.getLocalDepth() == globalDepth) {
+			if (insertToBucket.getLocalDepth() == globalDepth
+					|| newBucketIndex >= (int) Math.pow(2, globalDepth)) {
+				System.out.println("Doubling number of buckets from " +
+						(int) Math.pow(2, globalDepth)  + " to " + (int) Math.pow(2, globalDepth + 1));
 				expandDirectory();
+				//insertBucketIndex = getBucketIndex(val);
 			}
 
 			//now either way we can assume localDepth < globalDepth
 			if (insertToBucket.getLocalDepth() < globalDepth) {
-				System.out.println("Splitting bucket " + idxname + insertBucketIndex);
-				//add in new value, then split the overfull bucket into two
-				insertToBucket.insert(val, rid);
+				System.out.println("Splitting bucket " + idxname + insertBucketIndex
+						+ " (bucket " + insertBucketIndex + ")");
+				//split the bucket into two
 				Bucket temp1, temp2;
-				temp1 = new Bucket(-1, insertToBucket.getLocalDepth() + 1, MAX_BUCKET_SIZE);
-				temp2 = new Bucket(-1, insertToBucket.getLocalDepth() + 1, MAX_BUCKET_SIZE);
+				temp1 = new Bucket(insertBucketIndex, newLocalDepth, MAX_BUCKET_SIZE);
+				temp2 = new Bucket(newBucketIndex, newLocalDepth, MAX_BUCKET_SIZE);
+
 				for (BucketVal b:
 					 insertToBucket.getContents()) {
 					Constant dataval = b.getDataval();
 					int hash = getBucketIndex(dataval);
 
-					if (hash == hash % insertBucketIndex) {
-						temp2.insert(b.getDataval(), b.getRid());
+					if (hash % (int) Math.pow(2, globalDepth) == insertBucketIndex) {
+						temp1.insert(b.getDataval(), b.getRid());
 					}
 					else {
-						temp1.insert(b.getDataval(), b.getRid());
+						temp2.insert(b.getDataval(), b.getRid());
 					}
 				}
 
-				//determine where to place both buckets
-				ArrayList<Integer> replacementIndexes = new ArrayList<>();
-				for (int i = 0; i < directory.size(); i++) {
-					if (directory.get(i) == insertToBucket) {
-						replacementIndexes.add(i);
-					}
-				}
-				for (int i:
-						replacementIndexes) {
-					if (i == i % insertBucketIndex) {
-						temp2.setIndex(i);
-						directory.set(i, temp2);
-					}
-					else {
-						temp1.setIndex(i);
-						directory.set(i, temp1);
-					}
-				}
+				directory.set(temp1.getIndex(), temp1);
+				directory.set(temp2.getIndex(), temp2);
+
 			}
 			printTable();
+			System.out.println("Finished splitting bucket " + insertBucketIndex +
+					" into bucket " + insertBucketIndex + " and bucket " + newBucketIndex);
+			splitting = true;
+			insert(val, rid);
 		}
 		else {
 			insertToBucket.insert(val, rid);
+			System.out.println("=======================================");
+
 		}
 
-		beforeFirst(val);
-		ts.insert();
-		ts.setInt("block", rid.blockNumber());
-		ts.setInt("id", rid.id());
-		ts.setVal("dataval", val);
+		if (!splitting) {
+			beforeFirst(val);
+			ts.insert();
+			ts.setInt("block", rid.blockNumber());
+			ts.setInt("id", rid.id());
+			ts.setVal("dataval", val);
+		}
 	}
 
 	/**
@@ -198,7 +209,10 @@ public class ExtensibleHashIndex implements Index {
 	}
 
 	private int getBucketIndex(Constant key) {
-		return Math.abs(key.hashCode()) % numBuckets;
+//		System.out.println("Num buckets: " + (int) Math.pow(2, globalDepth));
+//		System.out.println("Key hashcode: " + Math.abs(key.hashCode())
+//				% (int) Math.pow(2, globalDepth));
+		return Math.abs(key.hashCode()) % (int) Math.pow(2, globalDepth);
 	}
 
 	/**
@@ -211,11 +225,6 @@ public class ExtensibleHashIndex implements Index {
 		//This effectively copies the "pointers" for the newly created buckets
 		ArrayList<Bucket> newBuckets = directory;
 		directory.addAll(newBuckets);
-
-//		Bucket emptyBucket = new Bucket(globalDepth, MAX_BUCKET_SIZE);
-//		for (int i = 0; i < Math.abs(numBuckets - directory.size()); i++) {
-//			directory.add(emptyBucket);
-//		}
 	}
 
 	/**
@@ -259,84 +268,3 @@ public class ExtensibleHashIndex implements Index {
 	}
 
 }
-
-
-
-//	/**
-//	 * Positions the index before the first index record
-//	 * having the specified search key.
-//	 * The method hashes the search key to determine the bucket,
-//	 * and then opens a table scan on the file
-//	 * corresponding to the bucket.
-//	 * The table scan for the previous bucket (if any) is closed.
-//	 *
-//	 * @see Index#beforeFirst(Constant)
-//	 */
-//	public void beforeFirst(Constant searchkey) {
-//		close();
-//		this.searchkey = searchkey;
-//		int hashVal = this.searchkey.hashCode() % directory.length;
-//		int counter = 0;
-//		boolean hashValMatch = false;
-//		do {
-//			if (directory[counter].getHashVal() == hashVal) {
-//				directory[counter].delete(rid);
-//			}
-//		} while (!hashValMatch);
-//	}
-//
-//	/**
-//	 * Moves to the next record having the search key.
-//	 * The method loops through the table scan for the bucket,
-//	 * looking for a matching record, and returning false
-//	 * if there are no more such records.
-//	 *
-//	 * @see Index#next()
-//	 */
-//	public boolean next() {
-//	}
-//
-//	/**
-//	 * Retrieves the dataRID from the current record
-//	 * in the table scan for the bucket.
-//	 *
-//	 * @see Index#getDataRid()
-//	 */
-//	public RID getDataRid() {
-////		int blknum = ts.getInt("block");
-////		int id = ts.getInt("id");
-////		return new RID(blknum, id);
-//	}
-//
-//	/**
-//	 * Inserts a new record into the table scan for the bucket.
-//	 *
-//	 * @see Index#insert(Constant, RID)
-//	 */
-//	public void insert(Constant val, RID rid) {
-//	}
-//
-//	/**
-//	 * Deletes the specified record from the table scan for
-//	 * the bucket.  The method starts at the beginning of the
-//	 * scan, and loops through the records until the
-//	 * specified record is found.
-//	 *
-//	 * @see Index#delete(Constant, RID)
-//	 */
-//	public void delete(Constant val, RID rid) {
-//		beforeFirst(val);
-//
-//	}
-//
-//	/**
-//	 * Closes the index by closing the current table scan.
-//	 *
-//	 * @see Index#close()
-//	 */
-//	public void close() {
-//		if (ts != null)
-//			ts.close();
-//	}
-//
-//}
