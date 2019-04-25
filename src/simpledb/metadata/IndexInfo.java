@@ -2,6 +2,8 @@ package simpledb.metadata;
 
 import static java.sql.Types.INTEGER;
 import static simpledb.file.Page.BLOCK_SIZE;
+
+import simpledb.index.hash.ExtensibleHashIndex;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 import simpledb.record.*;
@@ -75,7 +77,7 @@ public class IndexInfo {
          return new BTreeIndex(idxname, sch, tx);
       }
       else{
-         return new HashIndex(idxname, sch, tx);
+         return new ExtensibleHashIndex(idxname, sch, tx);
       }
    }
    
