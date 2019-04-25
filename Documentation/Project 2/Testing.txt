@@ -9,7 +9,7 @@ Test4 has a b-tree index
 You can change the max size variable in the Project2Tests class to edit
 how big the tables are. The lower this is the faster it will run but the
 less of a difference the indices will show.
-(10,000 takes about mins on my computer)
+(10,000 takes a bit over an hour on my computer)
 
 The output should look something  like this:
   Test1 Query took: 235

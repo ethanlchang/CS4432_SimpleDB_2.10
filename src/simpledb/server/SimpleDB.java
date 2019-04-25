@@ -23,7 +23,8 @@ import simpledb.index.planner.IndexUpdatePlanner;
  * @author Edward Sciore
  */
 public class SimpleDB {
-   public static int BUFFER_SIZE = 8;
+   // @CS4432: Increased this to fix buffer abort exception
+   public static int BUFFER_SIZE = 100;
    public static String LOG_FILE = "simpledb.log";
    
    private static FileMgr     fm;

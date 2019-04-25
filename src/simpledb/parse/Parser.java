@@ -243,7 +243,6 @@ public class Parser {
 //   }
 
    public CreateIndexData createIndex() {
-      lex.eatKeyword("create");
       String idxtype = lex.eatId();
       lex.eatKeyword("index");
       String idxname = lex.eatId();

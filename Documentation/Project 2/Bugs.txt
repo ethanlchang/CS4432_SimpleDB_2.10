@@ -1,1 +1,7 @@
 No known bugs at the moment.
+
+Previously it would throw an error on creating the indices but this 
+was fixed by deleting the database and rerunning startup.
+
+We also previously ran into a bufferAbort exception but this was fixed 
+by increasing the database's buffer size.
